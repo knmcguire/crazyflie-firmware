@@ -1,0 +1,15 @@
+
+# To enable out of tree estimator
+CFLAGS += -DOOT_ESTIMATOR
+
+APP=1
+APP_STACKSIZE=300
+
+VPATH += src/
+PROJ_OBJ += app_oot_estimator.o 
+
+CFLAGS += -DOOT_ESTIMATOR_TASK_PRI=2
+CFLAGS += -DOOT_ESTIMATOR_NAME="OOT_ESTIMATOR"
+
+CRAZYFLIE_BASE=../../
+include $(CRAZYFLIE_BASE)/Makefile
