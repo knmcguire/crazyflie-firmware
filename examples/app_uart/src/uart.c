@@ -44,27 +44,29 @@
 
 void appMain() {
   DEBUG_PRINT("Waiting for activation ...\n");
-  uint8_t it = 0;
+  //uint8_t it = 0;
   vTaskDelay(M2T(2000));
   uart2Init(9600);
   uint8_t start_byte = 0xAA;
   uint8_t end_byte = 0x55;
-  uint8_t data[4 * sizeof(float) + 2]; // Extra space for start and end bytes
-  float array[4] = {1.0, 2.0, 3.0, 4.0};
+  uint8_t data[3 * sizeof(float) + 2]; // Extra space for start and end bytes
+  float array[3] = {0.0, 0.0, 0.0};
 
-  logVarId_t idpitch = logGetVarId("controller", "pitch");
-  logVarId_t idYaw = logGetVarId("controller", "roll");
+  logVarId_t idx = logGetVarId("stateEstimate", "x");
+  logVarId_t idy = logGetVarId("stateEstimate", "y");
+  logVarId_t idz = logGetVarId("stateEstimate", "z");
 
 
   while(1) {
    vTaskDelay(M2T(100));
 
-    array[0]= logGetFloat(idYaw);
-    array[1]= logGetFloat(idpitch);
+    array[0]= logGetFloat(idx);
+    array[1]= logGetFloat(idy);
+    array[2]= logGetFloat(idz);
 
 
     data[0] = start_byte;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 3; i++) {
         memcpy(&data[i * sizeof(float) + 1], &array[i], sizeof(float)); // Offset by 1 for start byte
     }
     data[sizeof(data) - 1] = end_byte;
@@ -73,7 +75,7 @@ void appMain() {
     }
 
 
-    DEBUG_PRINT("%d\n",it);
-    it++;
+    //DEBUG_PRINT("%d\n",it);
+    //it++;
   }
 }
