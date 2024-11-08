@@ -40,7 +40,9 @@
 #include "debug.h"
 #include "uart2.h"
 #include "log.h"
+#include "param.h"
 
+#define ARRAY_SIZE 6
 
 void appMain() {
   DEBUG_PRINT("Waiting for activation ...\n");
@@ -49,12 +51,17 @@ void appMain() {
   uart2Init(9600);
   uint8_t start_byte = 0xAA;
   uint8_t end_byte = 0x55;
-  uint8_t data[3 * sizeof(float) + 2]; // Extra space for start and end bytes
-  float array[3] = {0.0, 0.0, 0.0};
+  uint8_t data[ARRAY_SIZE * sizeof(float) + 2]; // Extra space for start and end bytes
+  float array[ARRAY_SIZE] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
   logVarId_t idx = logGetVarId("stateEstimate", "x");
   logVarId_t idy = logGetVarId("stateEstimate", "y");
   logVarId_t idz = logGetVarId("stateEstimate", "z");
+  logVarId_t idyaw = logGetVarId("stateEstimate", "yaw");
+
+  logVarId_t idctrlpitch = logGetVarId("controller", "pitch");
+  logVarId_t idctryawrate = logGetVarId("controller", "roll");
+
 
 
   while(1) {
@@ -63,10 +70,19 @@ void appMain() {
     array[0]= logGetFloat(idx);
     array[1]= logGetFloat(idy);
     array[2]= logGetFloat(idz);
+    array[3]= logGetFloat(idyaw);
+
+    float ctrl_forward = logGetFloat(idctrlpitch);
+    float ctrl_yaw = logGetFloat(idctryawrate);
+
+    array[4] = ctrl_forward;
+    array[5] = ctrl_yaw;
+
+
 
 
     data[0] = start_byte;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
         memcpy(&data[i * sizeof(float) + 1], &array[i], sizeof(float)); // Offset by 1 for start byte
     }
     data[sizeof(data) - 1] = end_byte;
