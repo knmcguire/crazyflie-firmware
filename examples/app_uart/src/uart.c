@@ -59,8 +59,8 @@ void appMain() {
   logVarId_t idz = logGetVarId("stateEstimate", "z");
   logVarId_t idyaw = logGetVarId("stateEstimate", "yaw");
 
-  logVarId_t idctrlpitch = logGetVarId("controller", "pitch");
-  logVarId_t idctryawrate = logGetVarId("controller", "roll");
+  logVarId_t idctrlpitch = logGetVarId("crtp_cmd", "vx_setpoint");
+  logVarId_t idctryawrate = logGetVarId("crtp_cmd", "yawrate_setpoint");
 
 
 

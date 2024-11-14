@@ -31,6 +31,7 @@
 
 #include "commander.h"
 #include "param.h"
+#include "log.h"
 #include "crtp.h"
 #include "num.h"
 #include "quatcompress.h"
@@ -305,6 +306,12 @@ struct hoverPacket_s {
   float yawrate;      // deg/s
   float zDistance;    // m in the world frame of reference
 } __attribute__((packed));
+
+
+float vx_setpoint = 0.0f;
+float yawrate_setpoint = 0.0f;
+
+
 static void hoverDecoder(setpoint_t *setpoint, uint8_t type, const void *data, size_t datalen)
 {
   const struct hoverPacket_s *values = data;
@@ -323,6 +330,9 @@ static void hoverDecoder(setpoint_t *setpoint, uint8_t type, const void *data, s
   setpoint->mode.y = modeVelocity;
   setpoint->velocity.x = values->vx;
   setpoint->velocity.y = values->vy;
+
+  vx_setpoint = values->vx;
+  yawrate_setpoint = values->yawrate;
 
   setpoint->velocity_body = true;
 }
@@ -435,7 +445,7 @@ void crtpCommanderGenericDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk)
  * configure the maximum angle/rate output given a maximum stick input
  * for CRTP packets with emulated CPPM channels (e.g. RC transmitters connecting
  * directly to the NRF radio, often with a 4-in-1 Multimodule), or for CPPM channels
- * from an external receiver.  
+ * from an external receiver.
  */
 PARAM_GROUP_START(cppm)
 
@@ -461,3 +471,11 @@ PARAM_ADD(PARAM_FLOAT | PARAM_PERSISTENT, angRoll, &s_CppmEmuRollMaxAngleDeg)
 PARAM_ADD(PARAM_FLOAT | PARAM_PERSISTENT, rateYaw, &s_CppmEmuYawMaxRateDps)
 
 PARAM_GROUP_STOP(cppm)
+
+
+LOG_GROUP_START(crtp_cmd)
+
+LOG_ADD(LOG_FLOAT, vx_setpoint, &vx_setpoint)
+LOG_ADD(LOG_FLOAT, yawrate_setpoint, &yawrate_setpoint)
+
+LOG_GROUP_STOP(crtp_cmd)
