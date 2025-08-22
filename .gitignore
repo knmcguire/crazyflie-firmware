@@ -42,6 +42,10 @@ build/
 # To avoid that /tools/build is ignored
 !/tools/*
 
+# Standalone C++ build directory and files
+build_standalone/
+tests/test_main_template.cpp
+
 **/*.o
 **/*.cmd
 **/*.a
