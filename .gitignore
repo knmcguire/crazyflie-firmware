@@ -46,6 +46,10 @@ build/
 build_standalone/
 tests/test_main_template.cpp
 
+# Standalone C build directory and files  
+build_standalone_c/
+CMakeLists.txt.bak
+
 **/*.o
 **/*.cmd
 **/*.a
